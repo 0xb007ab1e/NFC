@@ -44,10 +44,14 @@ jobs:
         # exit-zero treats all errors as warnings
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
     
-    - name: Check formatting with black
+    - name: Format code with black
       run: |
         cd server
-        black --check --line-length 100 .
+        black --line-length 100 .
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "GitHub Actions"
+        git add .
+        git diff --quiet && git diff --staged --quiet || git commit -m "Apply black formatting"
     
     - name: Type check with mypy
       run: |
