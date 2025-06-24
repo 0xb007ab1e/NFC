@@ -1,0 +1,19 @@
+# This file defines code owners for different parts of the repository
+# Code owners will be automatically requested for review on pull requests
+# Learn more: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything in the repo
+*       @0xb007ab1e
+
+# Server code
+/server/ @0xb007ab1e
+
+# Android application
+/android/ @0xb007ab1e
+
+# Documentation
+/docs/    @0xb007ab1e
+*.md      @0xb007ab1e
+
+# CI/CD workflow files
+/.github/workflows/ @0xb007ab1e

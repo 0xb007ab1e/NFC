@@ -1,0 +1,45 @@
+# Android-specific .gitignore
+
+# Gradle files
+.gradle/
+build/
+release/
+debug/
+
+# Local configuration file
+local.properties
+
+# Android Studio generated files
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Built application files
+*.apk
+*.ap_
+*.aab
+
+# Java class files
+*.class
+bin/
+gen/
+out/
+
+# Log Files
+*.log
+
+# IMPORTANT: Sensitive authentication files
+# These files contain proprietary authentication information
+# and MUST NEVER be committed to the repository
+*.p1d
+
+# Signing configs
+keystore.properties
+*.keystore
+*.jks
+*.p12
+
+# Other sensitive files
+google-services.json

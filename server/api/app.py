@@ -58,7 +58,7 @@ async def get_openapi_schema():
 @app.get("/api/health", tags=["System"])
 async def health_check():
     """Health check endpoint."""
-    return {"status": "ok", "version": __version__}
+    return {"status": "ok"}
 
 # Import and include routers
 # These will be implemented as part of Phase 1 development

@@ -1,5 +1,8 @@
 # NFC Reader/Writer System
 
+[![Python CI](https://github.com/0xb007ab1e/NFC/actions/workflows/python-ci.yml/badge.svg)](https://github.com/0xb007ab1e/NFC/actions/workflows/python-ci.yml)
+[![Android CI](https://github.com/0xb007ab1e/NFC/actions/workflows/android-ci.yml/badge.svg)](https://github.com/0xb007ab1e/NFC/actions/workflows/android-ci.yml)
+
 ## Fundamental Rules (MUST BE FOLLOWED)
 1. **No code writing until detailed design and implementation plan is complete**
 2. **All tasks must be completed, tested, and verified before marking as complete**
@@ -58,6 +61,22 @@ NFC/
 **Current Phase**: Transitioning from Phase 0 (Design and Planning) to Phase 1 (PC Server Development)
 
 The project has completed the design and planning phase. All design documents have been finalized and approved. The repository structure is being set up, and the project is preparing to begin implementation of the PC Server component.
+
+## ⚠️ Important Security Notice
+
+**DO NOT COMMIT `.p1d` FILES TO THIS REPOSITORY**
+
+These files contain proprietary authentication information and are extremely sensitive. We have implemented multiple safeguards to prevent these files from being committed:
+
+1. Added patterns to `.gitignore` files
+2. Installed Git pre-commit hooks to block sensitive files
+
+New contributors MUST run the Git hooks installation script before contributing:
+```bash
+bash tools/install_git_hooks.sh
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
 
 See the [Progress Tracker](PROGRESS_TRACKER.md) for detailed status information.
 

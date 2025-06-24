@@ -11,6 +11,7 @@ on:
     paths:
       - 'android/**'
       - '.github/workflows/android-ci.yml'
+  workflow_dispatch:
 
 jobs:
   lint:
@@ -26,9 +27,16 @@ jobs:
         distribution: 'temurin'
         cache: gradle
     
-    - name: Grant execute permission for gradlew
+    - name: Setup Gradle
       run: |
         cd android
+        # Create gradle wrapper if it doesn't exist
+        if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+          echo "Downloading Gradle wrapper..."
+          mkdir -p gradle/wrapper
+          curl -o gradle/wrapper/gradle-wrapper.jar https://repo.gradle.org/gradle/api/v1/dependency/maven/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar
+          curl -o gradle/wrapper/gradle-wrapper.properties https://raw.githubusercontent.com/gradle/gradle/v8.0.0/gradle/wrapper/gradle-wrapper.properties
+        fi
         chmod +x gradlew
     
     - name: Lint with Gradle
@@ -37,7 +45,7 @@ jobs:
         ./gradlew lint
     
     - name: Upload lint results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: lint-results
@@ -57,9 +65,16 @@ jobs:
         distribution: 'temurin'
         cache: gradle
     
-    - name: Grant execute permission for gradlew
+    - name: Setup Gradle
       run: |
         cd android
+        # Create gradle wrapper if it doesn't exist
+        if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+          echo "Downloading Gradle wrapper..."
+          mkdir -p gradle/wrapper
+          curl -o gradle/wrapper/gradle-wrapper.jar https://repo.gradle.org/gradle/api/v1/dependency/maven/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar
+          curl -o gradle/wrapper/gradle-wrapper.properties https://raw.githubusercontent.com/gradle/gradle/v8.0.0/gradle/wrapper/gradle-wrapper.properties
+        fi
         chmod +x gradlew
     
     - name: Run unit tests
@@ -68,7 +83,7 @@ jobs:
         ./gradlew testDebugUnitTest
     
     - name: Upload test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-results
@@ -88,9 +103,16 @@ jobs:
         distribution: 'temurin'
         cache: gradle
     
-    - name: Grant execute permission for gradlew
+    - name: Setup Gradle
       run: |
         cd android
+        # Create gradle wrapper if it doesn't exist
+        if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+          echo "Downloading Gradle wrapper..."
+          mkdir -p gradle/wrapper
+          curl -o gradle/wrapper/gradle-wrapper.jar https://repo.gradle.org/gradle/api/v1/dependency/maven/org/gradle/gradle-wrapper/8.0/gradle-wrapper-8.0.jar
+          curl -o gradle/wrapper/gradle-wrapper.properties https://raw.githubusercontent.com/gradle/gradle/v8.0.0/gradle/wrapper/gradle-wrapper.properties
+        fi
         chmod +x gradlew
     
     - name: Build with Gradle
@@ -99,7 +121,7 @@ jobs:
         ./gradlew assembleDebug
     
     - name: Upload APK
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: app-debug
         path: android/app/build/outputs/apk/debug/app-debug.apk
@@ -113,7 +135,7 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Download APK
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: app-debug
         path: artifacts
