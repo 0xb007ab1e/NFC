@@ -63,16 +63,24 @@ Follow these guidelines for commit messages:
 
 ## Development Environment Setup
 
-### Server (Python)
+### Required Git Configuration
 
 1. Clone the repository
-2. Navigate to the server directory
-3. Create a virtual environment: `python -m venv venv`
-4. Activate the virtual environment:
-   - Windows: `venv\\Scripts\\activate`
+2. Install the Git hooks to prevent accidental commit of sensitive files:
+   ```bash
+   bash tools/install_git_hooks.sh
+   ```
+   **IMPORTANT**: This step is crucial as it prevents sensitive `.p1d` authentication files and other credentials from being committed to the repository.
+
+### Server (Python)
+
+1. Navigate to the server directory
+2. Create a virtual environment: `python -m venv venv`
+3. Activate the virtual environment:
+   - Windows: `venv\Scripts\activate`
    - Unix/Mac: `source venv/bin/activate`
-5. Install dependencies: `pip install -r requirements.txt`
-6. Run tests to verify setup: `pytest`
+4. Install dependencies: `pip install -r requirements.txt`
+5. Run tests to verify setup: `pytest`
 
 ### Android App
 

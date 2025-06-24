@@ -62,6 +62,22 @@ NFC/
 
 The project has completed the design and planning phase. All design documents have been finalized and approved. The repository structure is being set up, and the project is preparing to begin implementation of the PC Server component.
 
+## ⚠️ Important Security Notice
+
+**DO NOT COMMIT `.p1d` FILES TO THIS REPOSITORY**
+
+These files contain proprietary authentication information and are extremely sensitive. We have implemented multiple safeguards to prevent these files from being committed:
+
+1. Added patterns to `.gitignore` files
+2. Installed Git pre-commit hooks to block sensitive files
+
+New contributors MUST run the Git hooks installation script before contributing:
+```bash
+bash tools/install_git_hooks.sh
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+
 See the [Progress Tracker](PROGRESS_TRACKER.md) for detailed status information.
 
 ## Getting Started
