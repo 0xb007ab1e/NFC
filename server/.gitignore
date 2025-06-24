@@ -1,0 +1,33 @@
+# Server-specific .gitignore
+
+# Python specifics
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+.env
+venv/
+*.egg-info/
+
+# Database
+*.db
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# IMPORTANT: Sensitive authentication files
+# These files contain proprietary authentication information
+# and MUST NEVER be committed to the repository
+*.p1d
+
+# Other sensitive files
+*.pem
+*.key
+credentials.json
+token.json
+secrets.yaml
