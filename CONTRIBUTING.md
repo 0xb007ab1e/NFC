@@ -105,14 +105,14 @@ Follow these guidelines for commit messages:
 
 ### Python
 
-- Follow PEP 8 style guide
+- Follow PEP 8 style guide as detailed in [Python Coding Standards](docs/standards/CODING_STANDARDS_PYTHON.md)
 - Use type hints where appropriate
 - Document functions and classes with docstrings
 - Run `black` and `flake8` before committing
 
 ### Kotlin/Java
 
-- Follow the Android Kotlin style guide
+- Follow the [Kotlin Coding Standards](docs/standards/CODING_STANDARDS_KOTLIN.md)
 - Use consistent naming conventions
 - Document public APIs
 - Run lint checks before committing
