@@ -1,5 +1,8 @@
 # NFC Reader/Writer System
 
+[![Python CI](https://github.com/0xb007ab1e/NFC/actions/workflows/python-ci.yml/badge.svg)](https://github.com/0xb007ab1e/NFC/actions/workflows/python-ci.yml)
+[![Android CI](https://github.com/0xb007ab1e/NFC/actions/workflows/android-ci.yml/badge.svg)](https://github.com/0xb007ab1e/NFC/actions/workflows/android-ci.yml)
+
 ## Fundamental Rules (MUST BE FOLLOWED)
 1. **No code writing until detailed design and implementation plan is complete**
 2. **All tasks must be completed, tested, and verified before marking as complete**
