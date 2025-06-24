@@ -1,23 +1,31 @@
 """Setup script for the NFC Reader/Writer System - PC Server Component."""
 
+import re
 from setuptools import setup, find_packages
 
-# Read version from __init__.py
-with open('__init__.py', 'r') as f:
-    for line in f:
-        if line.startswith('__version__'):
-            version = line.strip().split('=')[1].strip(' \'"')
-            break
-    else:
-        version = '0.1.0'
+# Define version directly
+version = '0.1.0'
 
 # Read README.md for long description
-with open('README.md', 'r') as f:
-    long_description = f.read()
+try:
+    with open('README.md', 'r') as f:
+        long_description = f.read()
+except FileNotFoundError:
+    long_description = 'NFC Reader/Writer System - PC Server Component'
 
 # Read requirements.txt for dependencies
-with open('requirements.txt', 'r') as f:
-    requirements = [line.strip() for line in f if line.strip() and not line.startswith('#')]
+try:
+    with open('requirements.txt', 'r') as f:
+        requirements = [line.strip() for line in f if line.strip() and not line.startswith('#')]
+except FileNotFoundError:
+    # Default requirements if file not found
+    requirements = [
+        'fastapi>=0.95.0',
+        'uvicorn>=0.21.1',
+        'sqlalchemy>=2.0.9',
+        'pydantic>=1.10.7',
+        'python-dotenv>=1.0.0'
+    ]
 
 setup(
     name='nfc-reader-writer-server',
