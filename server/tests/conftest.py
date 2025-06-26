@@ -45,15 +45,8 @@ def test_db_session() -> Session:
 @pytest_asyncio.fixture
 async def async_client():
     """Create an async test client."""
-    from fastapi.testclient import TestClient
     from httpx import AsyncClient
-    
-    # Use the regular TestClient approach for now
-    test_client = TestClient(app)
-    
-    # For async testing, we need to use AsyncClient differently
-    transport = test_client._transport
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+    async with AsyncClient(app=app, base_url="http://test") as ac:
         yield ac
 
 # Create a TestClient alias for backward compatibility

@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Optional, Dict, Any
 import uuid
 
-from pydantic import Field, validator, constr, conint
+from pydantic import Field, field_validator, constr, conint
 from enum import Enum
 
 from server.api.schemas.base import BaseResponse, BaseCreate, BaseUpdate
@@ -35,23 +35,26 @@ class ConnectionCreate(BaseCreate):
     connection_info: Optional[Dict[str, Any]] = Field(None, description="Additional connection information")
     notes: Optional[constr(max_length=1000)] = Field(None, description="Additional notes")
 
-    @validator('ip_address')
-    def validate_ip_address(cls, v, values):
+    @field_validator('ip_address')
+    def validate_ip_address(cls, v, info):
         """Validate IP address is provided for WiFi connections."""
+        values = info.data if info else {}
         if values.get('connection_type') == ConnectionType.WIFI and not v:
             raise ValueError('IP address is required for WiFi connections')
         return v
     
-    @validator('port')
-    def validate_port(cls, v, values):
+    @field_validator('port')
+    def validate_port(cls, v, info):
         """Validate port is provided for WiFi connections."""
+        values = info.data if info else {}
         if values.get('connection_type') == ConnectionType.WIFI and not v:
             raise ValueError('Port is required for WiFi connections')
         return v
     
-    @validator('usb_serial')
-    def validate_usb_serial(cls, v, values):
+    @field_validator('usb_serial')
+    def validate_usb_serial(cls, v, info):
         """Validate USB serial is provided for USB connections."""
+        values = info.data if info else {}
         if values.get('connection_type') == ConnectionType.USB and not v:
             raise ValueError('USB serial number is required for USB connections')
         return v

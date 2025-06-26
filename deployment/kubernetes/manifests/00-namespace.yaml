@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nfc-system
+  labels:
+    name: nfc-system
+    app.kubernetes.io/name: nfc-reader-writer
+    app.kubernetes.io/version: "0.1.0"
+    environment: production
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nfc-config
+  namespace: nfc-system
+  labels:
+    app.kubernetes.io/name: nfc-reader-writer
+    app.kubernetes.io/component: config
+data:
+  # Server Configuration
+  NFC_SERVER_HOST: "0.0.0.0"
+  NFC_SERVER_PORT: "8000"
+  NFC_SERVER_LOG_LEVEL: "info"
+  
+  # Database Configuration
+  DATABASE_HOST: "postgres-service"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "nfc_system"
+  
+  # Redis Configuration
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  
+  # Security Configuration
+  JWT_ALGORITHM: "HS256"
+  JWT_EXPIRE_MINUTES: "30"
+  
+  # CORS Configuration
+  CORS_ORIGINS: '["https://api.example.com","https://app.example.com"]'
+  
+  # Environment
+  ENVIRONMENT: "production"
+  DEBUG: "false"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nfc-secrets
+  namespace: nfc-system
+  labels:
+    app.kubernetes.io/name: nfc-reader-writer
+    app.kubernetes.io/component: secrets
+type: Opaque
+data:
+  # Database credentials (base64 encoded)
+  # Example: echo -n "your_password" | base64
+  DATABASE_USER: bmZjX3VzZXI=  # nfc_user
+  DATABASE_PASSWORD: cGFzc3dvcmQ=  # password (CHANGE THIS!)
+  
+  # Security keys (base64 encoded)
+  # Generate with: python -c "import secrets; print(secrets.token_urlsafe(32))"
+  SECRET_KEY: Y2hhbmdlX3RoaXNfc2VjcmV0X2tleQ==  # change_this_secret_key
+  JWT_SECRET_KEY: Y2hhbmdlX3RoaXNfand0X3NlY3JldA==  # change_this_jwt_secret

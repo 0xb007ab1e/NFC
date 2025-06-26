@@ -8,7 +8,8 @@ from datetime import datetime
 from typing import Optional, Dict, Any, List
 import uuid
 
-from pydantic import Field, validator, EmailStr, constr, conint
+from pydantic import Field, field_validator, constr, conint
+from pydantic import EmailStr
 from enum import Enum
 
 from server.api.schemas.base import BaseResponse, BaseCreate, BaseUpdate
@@ -33,14 +34,14 @@ class UserCreate(BaseCreate):
     notes: Optional[constr(max_length=1000)] = Field(None, description="Additional notes")
     user_metadata: Optional[Dict[str, Any]] = Field(None, description="Additional user metadata")
 
-    @validator('username')
+    @field_validator('username')
     def validate_username(cls, v):
         """Validate username format."""
         if not v.replace('_', '').replace('-', '').isalnum():
             raise ValueError('Username can only contain letters, numbers, underscores, and hyphens')
         return v
 
-    @validator('password')
+    @field_validator('password')
     def validate_password(cls, v):
         """Validate password strength."""
         if len(v) < 8:
@@ -73,7 +74,7 @@ class UserPasswordUpdate(BaseUpdate):
     current_password: constr(min_length=1) = Field(..., description="Current password")
     new_password: constr(min_length=8) = Field(..., description="New password")
     
-    @validator('new_password')
+    @field_validator('new_password')
     def validate_new_password(cls, v):
         """Validate new password strength."""
         if len(v) < 8:

@@ -56,7 +56,12 @@ async def get_openapi_schema():
         routes=app.routes,
     )
 
-# Health check endpoint
+# Health check endpoints
+@app.get("/health", include_in_schema=False)
+async def simple_health_check():
+    """Simple health check endpoint for Docker/monitoring."""
+    return {"status": "healthy"}
+
 @app.get("/api/health", tags=["System"])
 async def health_check():
     """Health check endpoint."""

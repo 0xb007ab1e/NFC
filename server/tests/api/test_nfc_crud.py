@@ -67,7 +67,7 @@ def sample_uri_record_data() -> Dict[str, Any]:
 class TestNFCTagCRUD:
     """Test cases for NFC Tag CRUD operations."""
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_create_nfc_tag_success(
         self, 
         async_client: AsyncClient,
@@ -98,7 +98,7 @@ class TestNFCTagCRUD:
         assert db_tag is not None
         assert db_tag.uid == sample_tag_data["uid"]
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_create_nfc_tag_duplicate_uid_conflict(
         self, 
         async_client: AsyncClient,
@@ -119,7 +119,7 @@ class TestNFCTagCRUD:
         assert "already exists" in error_data["detail"].lower()
         assert sample_tag_data["uid"] in error_data["detail"]
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_create_nfc_tag_with_records(
         self,
         async_client: AsyncClient,
@@ -139,7 +139,7 @@ class TestNFCTagCRUD:
         assert data["records"][0]["type"] == sample_record_data["type"]
         assert data["records"][0]["payload_str"] == sample_record_data["payload_str"]
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_get_nfc_tag_success(
         self,
         async_client: AsyncClient,
@@ -160,7 +160,7 @@ class TestNFCTagCRUD:
         assert data["id"] == tag_id
         assert data["uid"] == sample_tag_data["uid"]
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_get_nonexistent_nfc_tag_404(
         self,
         async_client: AsyncClient
@@ -174,7 +174,7 @@ class TestNFCTagCRUD:
         assert "detail" in error_data
         assert "not found" in error_data["detail"].lower()
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_get_nfc_tags_list_success(
         self,
         async_client: AsyncClient,
@@ -209,7 +209,7 @@ class TestNFCTagCRUD:
         paginated_data = response_paginated.json()
         assert len(paginated_data) <= 2
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_update_nfc_tag_success(
         self,
         async_client: AsyncClient,
@@ -238,7 +238,7 @@ class TestNFCTagCRUD:
         assert data["notes"] == update_data["notes"]
         assert data["custom_data"] == update_data["custom_data"]
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_update_nonexistent_nfc_tag_404(
         self,
         async_client: AsyncClient
@@ -254,7 +254,7 @@ class TestNFCTagCRUD:
         assert "detail" in error_data
         assert "not found" in error_data["detail"].lower()
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_delete_nfc_tag_success(
         self,
         async_client: AsyncClient,
@@ -275,7 +275,7 @@ class TestNFCTagCRUD:
         get_response = await async_client.get(f"/api/nfc/tags/{tag_id}")
         assert get_response.status_code == 404
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_delete_nonexistent_nfc_tag_404(
         self,
         async_client: AsyncClient
@@ -289,7 +289,7 @@ class TestNFCTagCRUD:
         assert "detail" in error_data
         assert "not found" in error_data["detail"].lower()
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_delete_nfc_tag_with_records_cascades(
         self,
         async_client: AsyncClient,
@@ -323,7 +323,7 @@ class TestNFCTagCRUD:
 class TestNFCRecordOperations:
     """Test cases for NFC Record operations."""
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_create_nfc_record_success(
         self,
         async_client: AsyncClient,
@@ -352,7 +352,7 @@ class TestNFCRecordOperations:
         assert data["tag_id"] == tag_id
         assert data["record_index"] == sample_record_data["record_index"]
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_create_nfc_record_nonexistent_tag_404(
         self,
         async_client: AsyncClient,
@@ -369,7 +369,7 @@ class TestNFCRecordOperations:
         assert "detail" in error_data
         assert "not found" in error_data["detail"].lower()
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_get_nfc_record_success(
         self,
         async_client: AsyncClient,
@@ -398,7 +398,7 @@ class TestNFCRecordOperations:
         assert data["tnf"] == sample_record_data["tnf"]
         assert data["type"] == sample_record_data["type"]
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_get_nonexistent_nfc_record_404(
         self,
         async_client: AsyncClient
@@ -412,7 +412,7 @@ class TestNFCRecordOperations:
         assert "detail" in error_data
         assert "not found" in error_data["detail"].lower()
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_get_records_for_tag_success(
         self,
         async_client: AsyncClient,
@@ -449,7 +449,7 @@ class TestNFCRecordOperations:
         # Verify records are sorted by record_index
         assert data[0]["record_index"] <= data[1]["record_index"]
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_get_records_for_nonexistent_tag_404(
         self,
         async_client: AsyncClient
@@ -467,7 +467,7 @@ class TestNFCRecordOperations:
 class TestNFCValidationAndEdgeCases:
     """Test cases for validation and edge cases."""
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_create_tag_invalid_uid_format(
         self,
         async_client: AsyncClient,
@@ -482,7 +482,7 @@ class TestNFCValidationAndEdgeCases:
         error_data = response.json()
         assert "detail" in error_data
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_create_tag_missing_required_fields(
         self,
         async_client: AsyncClient
@@ -496,7 +496,7 @@ class TestNFCValidationAndEdgeCases:
         response = await async_client.post("/api/nfc/tags", json=incomplete_data)
         assert response.status_code == 422  # Validation error
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_create_record_invalid_tnf(
         self,
         async_client: AsyncClient,
@@ -520,7 +520,7 @@ class TestNFCValidationAndEdgeCases:
         response = await async_client.post("/api/nfc/records", json=invalid_record_data)
         assert response.status_code == 422  # Validation error
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_create_tag_with_empty_tech_list(
         self,
         async_client: AsyncClient,
@@ -532,7 +532,7 @@ class TestNFCValidationAndEdgeCases:
         response = await async_client.post("/api/nfc/tags", json=sample_tag_data)
         assert response.status_code == 422  # Validation error
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_large_payload_handling(
         self,
         async_client: AsyncClient,
@@ -557,7 +557,7 @@ class TestNFCValidationAndEdgeCases:
         response = await async_client.post("/api/nfc/records", json=large_record_data)
         assert response.status_code == 201
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_concurrent_tag_creation_race_condition(
         self,
         async_client: AsyncClient,
@@ -581,7 +581,7 @@ class TestNFCValidationAndEdgeCases:
         assert success_count == 1
         assert conflict_count >= 1
 
-    @pytest_asyncio.async_test
+    @pytest.mark.asyncio
     async def test_tag_with_gps_coordinates_boundary_values(
         self,
         async_client: AsyncClient,

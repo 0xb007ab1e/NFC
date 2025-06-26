@@ -40,14 +40,11 @@ jobs:
     
     - name: Run Alembic migrations
       run: |
-        cd server/db/migrations
-        # Create a temporary alembic.ini for testing
-        cp alembic.ini alembic_test.ini
-        sed -i 's|sqlite:///../../data/nfc_data.db|sqlite:////tmp/test_db/test.db|g' alembic_test.ini
-        # Run migrations
-        alembic -c alembic_test.ini upgrade head
-        # Clean up temporary config
-        rm alembic_test.ini
+        cd server
+        # Set database URL for testing
+        export DATABASE_URL="sqlite:////tmp/test_db/test.db"
+        # Run migrations using Python module
+        python -m alembic -c db/migrations/alembic.ini upgrade head
     
     - name: Lint with flake8
       run: |
