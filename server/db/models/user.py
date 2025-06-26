@@ -7,8 +7,8 @@ This module contains the User model for storing user authentication data.
 from datetime import datetime
 import uuid
 
-from sqlalchemy import Column, String, Boolean, DateTime, Text, Integer
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import Column, String, Boolean, DateTime, func, JSON, Integer, Text
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from server.db.models.base import BaseModel
@@ -32,7 +32,7 @@ class User(BaseModel):
     
     # Authorization
     is_admin = Column(Boolean, default=False, nullable=False)
-    permissions = Column(JSONB, nullable=True)  # JSON array of permissions
+    permissions = Column(JSON, nullable=True)  # JSON array of permissions
     
     # User information
     first_name = Column(String(50), nullable=True)
@@ -45,7 +45,7 @@ class User(BaseModel):
     
     # Additional data
     notes = Column(Text, nullable=True)
-    user_metadata = Column(JSONB, nullable=True)  # Additional user metadata
+    user_metadata = Column(JSON, nullable=True)  # Additional user metadata
     
     # Relationships
     connections = relationship("Connection", back_populates="user")

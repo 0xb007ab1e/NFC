@@ -7,8 +7,8 @@ This module contains the Device model for storing connected Android device data.
 from typing import List
 import uuid
 
-from sqlalchemy import Column, String, Text, Boolean
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import Column, String, Text, Boolean, JSON
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from server.db.models.base import BaseModel
@@ -41,7 +41,7 @@ class Device(BaseModel):
     last_connection_type = Column(String(50), nullable=True)  # USB, WiFi, etc.
     
     # Additional information
-    device_info = Column(JSONB, nullable=True)  # Additional device information
+    device_info = Column(JSON, nullable=True)  # Additional device information
     notes = Column(Text, nullable=True)
     
     # Relationships

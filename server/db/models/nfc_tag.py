@@ -8,8 +8,8 @@ from typing import List, Optional
 from datetime import datetime
 import uuid
 
-from sqlalchemy import Column, String, DateTime, Integer, Text, Boolean, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import Column, String, Integer, Boolean, Text, DateTime, TIMESTAMP, func, JSON, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from server.db.models.base import BaseModel
@@ -28,7 +28,7 @@ class NFCTag(BaseModel):
 
     # Tag identification
     uid = Column(String(255), index=True, nullable=False)
-    tech_list = Column(JSONB, nullable=False)  # JSON array of technologies
+    tech_list = Column(JSON, nullable=False)  # JSON array of technologies
     
     # Tag type information
     tag_type = Column(String(50), nullable=False, index=True)
@@ -38,7 +38,7 @@ class NFCTag(BaseModel):
     
     # Read information
     read_timestamp = Column(DateTime, nullable=False)
-    read_location = Column(JSONB, nullable=True)  # Optional GPS coordinates
+    read_location = Column(JSON, nullable=True)  # Optional GPS coordinates
     
     # Device relationship
     device_id = Column(UUID(as_uuid=True), ForeignKey("device.id"), nullable=False)
@@ -49,7 +49,7 @@ class NFCTag(BaseModel):
     
     # Additional data
     notes = Column(Text, nullable=True)
-    custom_data = Column(JSONB, nullable=True)  # Any additional custom data
+    custom_data = Column(JSON, nullable=True)  # Any additional custom data
     
     def __repr__(self) -> str:
         """
