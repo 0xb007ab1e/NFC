@@ -30,6 +30,25 @@ jobs:
         pip install flake8 pytest pytest-cov black mypy
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     
+    - name: Set up temporary SQLite database for migrations
+      run: |
+        cd server
+        # Create temporary database directory
+        mkdir -p /tmp/test_db
+        # Set environment variable for test database
+        echo "DATABASE_URL=sqlite:///tmp/test_db/test.db" >> $GITHUB_ENV
+    
+    - name: Run Alembic migrations
+      run: |
+        cd server/db/migrations
+        # Create a temporary alembic.ini for testing
+        cp alembic.ini alembic_test.ini
+        sed -i 's|sqlite:///../../data/nfc_data.db|sqlite:////tmp/test_db/test.db|g' alembic_test.ini
+        # Run migrations
+        alembic -c alembic_test.ini upgrade head
+        # Clean up temporary config
+        rm alembic_test.ini
+    
     - name: Lint with flake8
       run: |
         cd server
@@ -57,7 +76,7 @@ jobs:
     - name: Test with pytest
       run: |
         cd server
-        pytest --cov=./ --cov-report=xml
+        pytest --cov=server --cov-report=xml:coverage.xml --cov-report=term --cov-fail-under=75
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
