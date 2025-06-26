@@ -23,6 +23,8 @@ class NFCTag(BaseModel):
     It contains metadata about the tag and has a relationship to NFCRecord
     instances containing the actual data.
     """
+    
+    __tablename__ = "nfc_tag"
 
     # Tag identification
     uid = Column(String(255), index=True, nullable=False)

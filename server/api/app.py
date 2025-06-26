@@ -61,10 +61,11 @@ async def health_check():
     return {"status": "ok"}
 
 # Import and include routers
+from server.api.routes import nfc_data
 # These will be implemented as part of Phase 1 development
-# from server.api.routes import nfc_data, usb, wifi, auth
+# from server.api.routes import usb, wifi, auth
 
-# app.include_router(nfc_data.router, prefix="/api/nfc", tags=["NFC"])
+app.include_router(nfc_data.router, prefix="/api/nfc", tags=["NFC"])
 # app.include_router(usb.router, prefix="/api/usb", tags=["USB"])
 # app.include_router(wifi.router, prefix="/api/wifi", tags=["WiFi"])
 # app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
@@ -74,8 +75,9 @@ async def health_check():
 async def startup_event():
     """Execute code when the application starts up."""
     logger.info("API server starting up")
-    # Initialize databases, connections, etc.
-    # This will be implemented as part of Phase 1 development
+    # Initialize database
+    from server.db.config import init_db
+    init_db()
 
 @app.on_event("shutdown")
 async def shutdown_event():

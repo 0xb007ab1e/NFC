@@ -10,7 +10,7 @@ import uuid
 
 from pydantic import Field
 
-from server.api.schemas.base import BaseCreate, BaseResponse
+from server.api.schemas.base import BaseCreate, BaseResponse, BaseUpdate
 
 
 class NFCRecordCreate(BaseCreate):
@@ -80,3 +80,11 @@ class NFCTagResponse(BaseResponse):
     
     # Related records
     records: List[NFCRecordResponse] = []
+
+
+class NFCTagUpdate(BaseUpdate):
+    """Schema for updating an NFC tag."""
+    
+    is_writable: Optional[bool] = None
+    notes: Optional[str] = None
+    custom_data: Optional[Dict[str, Any]] = None
