@@ -5,7 +5,7 @@ This module contains the base Pydantic models for API requests and responses.
 """
 
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
 import uuid
 
 from pydantic import BaseModel, Field, ConfigDict
@@ -46,7 +46,7 @@ class BaseUpdate(APIModel):
 class PaginatedResponse(APIModel):
     """Paginated response model."""
     
-    items: list[Any]
+    items: List[Any]
     total: int
     page: int
     size: int
@@ -55,7 +55,7 @@ class PaginatedResponse(APIModel):
     @classmethod
     def create(
         cls,
-        items: list[Any],
+        items: List[Any],
         total: int,
         page: int,
         size: int,
@@ -75,5 +75,7 @@ class ErrorResponse(APIModel):
     """Error response model."""
     
     detail: str
-    code: Optional[str] = None
+    code: str
+    status_code: int
     params: Optional[Dict[str, Any]] = None
+    errors: Optional[List[Dict[str, Any]]] = None  # For validation errors

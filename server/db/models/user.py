@@ -45,7 +45,7 @@ class User(BaseModel):
     
     # Additional data
     notes = Column(Text, nullable=True)
-    metadata = Column(JSONB, nullable=True)  # Additional user metadata
+    user_metadata = Column(JSONB, nullable=True)  # Additional user metadata
     
     # Relationships
     connections = relationship("Connection", back_populates="user")

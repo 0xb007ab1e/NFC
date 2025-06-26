@@ -8,19 +8,40 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 import uuid
 
-from pydantic import Field
+from pydantic import Field, validator, constr, conint
+from enum import Enum
 
 from server.api.schemas.base import BaseCreate, BaseResponse, BaseUpdate
+
+
+class TNFType(int, Enum):
+    """Enum for TNF (Type Name Format) values."""
+    EMPTY = 0
+    WELL_KNOWN = 1
+    MEDIA = 2
+    ABSOLUTE_URI = 3
+    EXTERNAL = 4
+    UNKNOWN = 5
+    UNCHANGED = 6
+    
+
+class NFCTagType(str, Enum):
+    """Enum for NFC tag types."""
+    TYPE1 = "Type1"
+    TYPE2 = "Type2"
+    TYPE3 = "Type3"
+    TYPE4 = "Type4"
+    UNKNOWN = "Unknown"
 
 
 class NFCRecordCreate(BaseCreate):
     """Schema for creating an NFC record."""
     
-    tnf: int = Field(..., description="Type Name Format")
-    type: str = Field(..., description="Record type")
+    tnf: TNFType = Field(..., description="Type Name Format")
+    type: constr(max_length=255) = Field(..., description="Record type")
     payload: Optional[bytes] = Field(None, description="Binary payload data")
-    payload_str: Optional[str] = Field(None, description="String representation of payload")
-    record_index: int = Field(..., description="Position in the tag")
+    payload_str: Optional[constr(max_length=10000)] = Field(None, description="String representation of payload")
+    record_index: conint(ge=0) = Field(..., description="Position in the tag")
     parsed_data: Optional[Dict[str, Any]] = Field(None, description="Parsed data in JSON format")
 
 
@@ -44,19 +65,19 @@ class NFCRecordResponse(BaseResponse):
 class NFCTagCreate(BaseCreate):
     """Schema for creating an NFC tag."""
     
-    uid: str = Field(..., description="Unique identifier of the tag")
-    tech_list: List[str] = Field(..., description="List of technologies supported by the tag")
-    tag_type: str = Field(..., description="Type of the tag")
+    uid: constr(strip_whitespace=True, min_length=8, max_length=128, pattern=r'^[0-9A-Fa-f]+$') = Field(..., description="Unique identifier of the tag (hex format)")
+    tech_list: List[constr(min_length=1, max_length=50)] = Field(..., description="List of technologies supported by the tag")
+    tag_type: NFCTagType = Field(..., description="Type of the tag")
     is_writable: bool = Field(False, description="Whether the tag is writable")
     is_ndef_formatted: bool = Field(False, description="Whether the tag is NDEF formatted")
-    max_size: Optional[int] = Field(None, description="Maximum size of the tag in bytes")
+    max_size: Optional[conint(gt=0)] = Field(None, description="Maximum size of the tag in bytes")
     read_timestamp: datetime = Field(..., description="Timestamp when the tag was read")
     read_location: Optional[Dict[str, float]] = Field(
         None, 
         description="GPS coordinates where the tag was read"
     )
     device_id: uuid.UUID = Field(..., description="ID of the device that read the tag")
-    notes: Optional[str] = Field(None, description="Additional notes about the tag")
+    notes: Optional[constr(max_length=1000)] = Field(None, description="Additional notes about the tag")
     custom_data: Optional[Dict[str, Any]] = Field(None, description="Custom data associated with the tag")
     
     # Records to create with the tag
@@ -86,5 +107,5 @@ class NFCTagUpdate(BaseUpdate):
     """Schema for updating an NFC tag."""
     
     is_writable: Optional[bool] = None
-    notes: Optional[str] = None
+    notes: Optional[constr(max_length=1000)] = None
     custom_data: Optional[Dict[str, Any]] = None
