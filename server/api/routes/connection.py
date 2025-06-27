@@ -222,7 +222,7 @@ async def update_connection(
             )
     
     # Update fields
-    for key, value in connection_data.dict(exclude_unset=True).items():
+    for key, value in connection_data.model_dump(exclude_unset=True).items():
         setattr(connection, key, value)
     
     try:

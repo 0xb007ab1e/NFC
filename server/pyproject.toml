@@ -28,3 +28,8 @@ addopts = "--cov=server --cov-report=xml:coverage.xml --cov-report=term"
 testpaths = ["tests"]
 python_files = "test_*.py"
 python_functions = "test_*"
+filterwarnings = [
+    "ignore::pydantic.warnings.PydanticDeprecatedSince20",
+    "ignore::DeprecationWarning:passlib.*:",
+    "ignore::pytest.PytestCollectionWarning"
+]

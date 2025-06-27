@@ -38,34 +38,54 @@ async def create_nfc_tag(
     
     This endpoint accepts NFC tag data from a mobile device and stores it in the database.
     """
-    logger.info(f"Creating new NFC tag: {tag_data.tag_id}")
+    logger.info(f"Creating new NFC tag: {tag_data.uid}")
     
     # Check if tag already exists
-    existing_tag = db.query(NFCTag).filter(NFCTag.tag_id == tag_data.tag_id).first()
+    existing_tag = db.query(NFCTag).filter(NFCTag.uid == tag_data.uid).first()
     if existing_tag:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"NFC tag with ID {tag_data.tag_id} already exists"
+            detail=f"NFC tag with UID {tag_data.uid} already exists"
         )
     
     # Create new tag
     try:
         # Convert from schema to model
         new_tag = NFCTag(
-            tag_id=tag_data.tag_id,
-            technology=tag_data.technology,
-            serial_number=tag_data.serial_number,
-            memory_size=tag_data.memory_size,
+            uid=tag_data.uid,
+            tech_list=tag_data.tech_list,
+            tag_type=tag_data.tag_type.value,
             is_writable=tag_data.is_writable,
-            metadata=tag_data.metadata
+            is_ndef_formatted=tag_data.is_ndef_formatted,
+            max_size=tag_data.max_size,
+            read_timestamp=tag_data.read_timestamp,
+            read_location=tag_data.read_location,
+            device_id=tag_data.device_id,
+            notes=tag_data.notes,
+            custom_data=tag_data.custom_data
         )
         
         # Add to database
         db.add(new_tag)
+        db.flush()  # Get the tag ID before creating records
+        
+        # Create associated records
+        for record_data in tag_data.records:
+            new_record = NFCRecord(
+                tnf=record_data.tnf,
+                type=record_data.type,
+                payload=record_data.payload,
+                payload_str=record_data.payload_str,
+                tag_id=new_tag.id,
+                record_index=record_data.record_index,
+                parsed_data=record_data.parsed_data
+            )
+            db.add(new_record)
+        
         db.commit()
         db.refresh(new_tag)
         
-        logger.info(f"Successfully created NFC tag with ID: {new_tag.id}")
+        logger.info(f"Successfully created NFC tag with ID: {new_tag.id} and {len(tag_data.records)} records")
         return new_tag
         
     except Exception as e:
@@ -136,7 +156,7 @@ async def update_nfc_tag(
         )
     
     # Update fields
-    for key, value in tag_data.dict(exclude_unset=True).items():
+    for key, value in tag_data.model_dump(exclude_unset=True).items():
         setattr(tag, key, value)
     
     try:

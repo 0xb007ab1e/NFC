@@ -43,18 +43,57 @@ def test_db_session() -> Session:
         Base.metadata.drop_all(bind=test_engine)
 
 @pytest_asyncio.fixture
-async def async_client():
+async def async_client(test_db_session):
     """Create an async test client."""
-    from httpx import AsyncClient
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    from fastapi.testclient import TestClient
+    from httpx import AsyncClient, ASGITransport
+    from server.api.app import app
+    from server.db.config import get_db
+    
+    # Override the dependency
+    def override_get_db():
+        try:
+            yield test_db_session
+        finally:
+            pass
+    
+    app.dependency_overrides[get_db] = override_get_db
+    
+    # Use ASGI transport with the FastAPI app
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
+    
+    # Clean up overrides
+    app.dependency_overrides.clear()
 
 # Create a TestClient alias for backward compatibility
 TestClient = AsyncClient
 
+@pytest.fixture
+def test_device(test_db_session):
+    """Create a test device for testing."""
+    from server.db.models import Device
+    import uuid
+    from datetime import datetime
+    
+    device = Device(
+        name="Test Device",
+        description="Test device for NFC testing",
+        device_type="mobile",
+        platform="android",
+        version="1.0.0",
+        last_seen=datetime.now(),
+        is_active=True
+    )
+    test_db_session.add(device)
+    test_db_session.commit()
+    test_db_session.refresh(device)
+    return device
+
 # Test data fixtures
 @pytest.fixture
-def sample_tag_data():
+def sample_tag_data(test_device):
     """Sample NFC tag data for testing."""
     from datetime import datetime
     import uuid
@@ -69,7 +108,7 @@ def sample_tag_data():
         "max_size": 8192,
         "read_timestamp": datetime.now().isoformat(),
         "read_location": {"latitude": 37.7749, "longitude": -122.4194},
-        "device_id": str(uuid.uuid4()),
+        "device_id": str(test_device.id),
         "notes": "Test NFC tag for unit testing",
         "custom_data": {"test_field": "test_value"},
         "records": []
@@ -86,4 +125,38 @@ def sample_record_data():
         "payload_str": "Hello, World!",
         "record_index": 0,
         "parsed_data": {"text": "Hello, World!", "language": "en"}
+    }
+
+
+@pytest.fixture
+def sample_user_data():
+    """Sample user data for testing."""
+    return {
+        "username": "testuser",
+        "email": "test@example.com",
+        "password": "SecurePass123!",
+        "is_active": True,
+        "is_admin": False,
+        "permissions": ["read", "write"],
+        "first_name": "Test",
+        "last_name": "User",
+        "notes": "Test user for unit testing",
+        "user_metadata": {"department": "Testing"}
+    }
+
+
+@pytest.fixture
+def admin_user_data():
+    """Sample admin user data for testing."""
+    return {
+        "username": "adminuser",
+        "email": "admin@example.com",
+        "password": "AdminPass123!",
+        "is_active": True,
+        "is_admin": True,
+        "permissions": ["read", "write", "admin"],
+        "first_name": "Admin",
+        "last_name": "User",
+        "notes": "Admin user for testing",
+        "user_metadata": {"department": "Administration"}
     }

@@ -75,7 +75,7 @@ class TestNFCTagCRUD:
         sample_tag_data: Dict[str, Any]
     ):
         """Test successful NFC tag creation (happy path)."""
-        response = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        response = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         
         assert response.status_code == 201
         data = response.json()
@@ -107,11 +107,11 @@ class TestNFCTagCRUD:
     ):
         """Test duplicate NFC tag UID returns 409 Conflict."""
         # Create first tag
-        response1 = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        response1 = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         assert response1.status_code == 201
         
         # Attempt to create tag with same UID
-        response2 = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        response2 = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         assert response2.status_code == 409
         
         error_data = response2.json()
@@ -130,7 +130,7 @@ class TestNFCTagCRUD:
         """Test creating NFC tag with embedded records."""
         sample_tag_data["records"] = [sample_record_data]
         
-        response = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        response = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         assert response.status_code == 201
         
         data = response.json()
@@ -148,12 +148,12 @@ class TestNFCTagCRUD:
     ):
         """Test successful retrieval of a single NFC tag."""
         # Create tag first
-        create_response = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        create_response = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         assert create_response.status_code == 201
         tag_id = create_response.json()["id"]
         
         # Retrieve tag
-        response = await async_client.get(f"/api/nfc/tags/{tag_id}")
+        response = await async_client.get(f"/api/v1/nfc/tags/{tag_id}")
         assert response.status_code == 200
         
         data = response.json()
@@ -167,7 +167,7 @@ class TestNFCTagCRUD:
     ):
         """Test retrieval of non-existent NFC tag returns 404."""
         non_existent_id = str(uuid.uuid4())
-        response = await async_client.get(f"/api/nfc/tags/{non_existent_id}")
+        response = await async_client.get(f"/api/v1/nfc/tags/{non_existent_id}")
         
         assert response.status_code == 404
         error_data = response.json()
@@ -191,12 +191,12 @@ class TestNFCTagCRUD:
             tag_data["uid"] = f"04A12B3C4D5E{i:02X}"
             tag_data["notes"] = f"Test tag {i}"
             
-            response = await async_client.post("/api/nfc/tags", json=tag_data)
+            response = await async_client.post("/api/v1/nfc/tags", json=tag_data)
             assert response.status_code == 201
             created_tags.append(response.json())
         
         # Retrieve tags list
-        response = await async_client.get("/api/nfc/tags")
+        response = await async_client.get("/api/v1/nfc/tags")
         assert response.status_code == 200
         
         data = response.json()
@@ -204,7 +204,7 @@ class TestNFCTagCRUD:
         assert len(data) >= tag_count
         
         # Verify pagination
-        response_paginated = await async_client.get("/api/nfc/tags?skip=0&limit=2")
+        response_paginated = await async_client.get("/api/v1/nfc/tags?skip=0&limit=2")
         assert response_paginated.status_code == 200
         paginated_data = response_paginated.json()
         assert len(paginated_data) <= 2
@@ -218,7 +218,7 @@ class TestNFCTagCRUD:
     ):
         """Test successful NFC tag update."""
         # Create tag first
-        create_response = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        create_response = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         assert create_response.status_code == 201
         tag_id = create_response.json()["id"]
         
@@ -229,7 +229,7 @@ class TestNFCTagCRUD:
             "custom_data": {"updated_field": "updated_value"}
         }
         
-        response = await async_client.put(f"/api/nfc/tags/{tag_id}", json=update_data)
+        response = await async_client.put(f"/api/v1/nfc/tags/{tag_id}", json=update_data)
         assert response.status_code == 200
         
         data = response.json()
@@ -247,7 +247,7 @@ class TestNFCTagCRUD:
         non_existent_id = str(uuid.uuid4())
         update_data = {"notes": "Should not work"}
         
-        response = await async_client.put(f"/api/nfc/tags/{non_existent_id}", json=update_data)
+        response = await async_client.put(f"/api/v1/nfc/tags/{non_existent_id}", json=update_data)
         assert response.status_code == 404
         
         error_data = response.json()
@@ -263,16 +263,16 @@ class TestNFCTagCRUD:
     ):
         """Test successful NFC tag deletion."""
         # Create tag first
-        create_response = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        create_response = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         assert create_response.status_code == 201
         tag_id = create_response.json()["id"]
         
         # Delete tag
-        response = await async_client.delete(f"/api/nfc/tags/{tag_id}")
+        response = await async_client.delete(f"/api/v1/nfc/tags/{tag_id}")
         assert response.status_code == 204
         
         # Verify tag is deleted
-        get_response = await async_client.get(f"/api/nfc/tags/{tag_id}")
+        get_response = await async_client.get(f"/api/v1/nfc/tags/{tag_id}")
         assert get_response.status_code == 404
 
     @pytest.mark.asyncio
@@ -282,7 +282,7 @@ class TestNFCTagCRUD:
     ):
         """Test deletion of non-existent NFC tag returns 404."""
         non_existent_id = str(uuid.uuid4())
-        response = await async_client.delete(f"/api/nfc/tags/{non_existent_id}")
+        response = await async_client.delete(f"/api/v1/nfc/tags/{non_existent_id}")
         
         assert response.status_code == 404
         error_data = response.json()
@@ -300,7 +300,7 @@ class TestNFCTagCRUD:
         """Test that deleting an NFC tag cascades to delete its records."""
         # Create tag with record
         sample_tag_data["records"] = [sample_record_data]
-        create_response = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        create_response = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         assert create_response.status_code == 201
         
         tag_data = create_response.json()
@@ -308,15 +308,15 @@ class TestNFCTagCRUD:
         record_id = tag_data["records"][0]["id"]
         
         # Verify record exists
-        record_response = await async_client.get(f"/api/nfc/records/{record_id}")
+        record_response = await async_client.get(f"/api/v1/nfc/records/{record_id}")
         assert record_response.status_code == 200
         
         # Delete tag
-        delete_response = await async_client.delete(f"/api/nfc/tags/{tag_id}")
+        delete_response = await async_client.delete(f"/api/v1/nfc/tags/{tag_id}")
         assert delete_response.status_code == 204
         
         # Verify record is also deleted (cascade)
-        record_check = await async_client.get(f"/api/nfc/records/{record_id}")
+        record_check = await async_client.get(f"/api/v1/nfc/records/{record_id}")
         assert record_check.status_code == 404
 
 
@@ -333,7 +333,7 @@ class TestNFCRecordOperations:
     ):
         """Test successful NFC record creation (happy path)."""
         # Create tag first
-        tag_response = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        tag_response = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         assert tag_response.status_code == 201
         tag_id = tag_response.json()["id"]
         
@@ -341,7 +341,7 @@ class TestNFCRecordOperations:
         sample_record_data["tag_id"] = tag_id
         
         # Create record
-        response = await async_client.post("/api/nfc/records", json=sample_record_data)
+        response = await async_client.post("/api/v1/nfc/records", json=sample_record_data)
         assert response.status_code == 201
         
         data = response.json()
@@ -362,7 +362,7 @@ class TestNFCRecordOperations:
         non_existent_tag_id = str(uuid.uuid4())
         sample_record_data["tag_id"] = non_existent_tag_id
         
-        response = await async_client.post("/api/nfc/records", json=sample_record_data)
+        response = await async_client.post("/api/v1/nfc/records", json=sample_record_data)
         assert response.status_code == 404
         
         error_data = response.json()
@@ -379,18 +379,18 @@ class TestNFCRecordOperations:
     ):
         """Test successful retrieval of a single NFC record."""
         # Create tag first
-        tag_response = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        tag_response = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         assert tag_response.status_code == 201
         tag_id = tag_response.json()["id"]
         
         # Create record
         sample_record_data["tag_id"] = tag_id
-        record_response = await async_client.post("/api/nfc/records", json=sample_record_data)
+        record_response = await async_client.post("/api/v1/nfc/records", json=sample_record_data)
         assert record_response.status_code == 201
         record_id = record_response.json()["id"]
         
         # Retrieve record
-        response = await async_client.get(f"/api/nfc/records/{record_id}")
+        response = await async_client.get(f"/api/v1/nfc/records/{record_id}")
         assert response.status_code == 200
         
         data = response.json()
@@ -405,7 +405,7 @@ class TestNFCRecordOperations:
     ):
         """Test retrieval of non-existent NFC record returns 404."""
         non_existent_id = str(uuid.uuid4())
-        response = await async_client.get(f"/api/nfc/records/{non_existent_id}")
+        response = await async_client.get(f"/api/v1/nfc/records/{non_existent_id}")
         
         assert response.status_code == 404
         error_data = response.json()
@@ -423,7 +423,7 @@ class TestNFCRecordOperations:
     ):
         """Test successful retrieval of all records for a specific tag."""
         # Create tag first
-        tag_response = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        tag_response = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         assert tag_response.status_code == 201
         tag_id = tag_response.json()["id"]
         
@@ -432,14 +432,14 @@ class TestNFCRecordOperations:
         sample_uri_record_data["tag_id"] = tag_id
         sample_uri_record_data["record_index"] = 1
         
-        record1_response = await async_client.post("/api/nfc/records", json=sample_record_data)
+        record1_response = await async_client.post("/api/v1/nfc/records", json=sample_record_data)
         assert record1_response.status_code == 201
         
-        record2_response = await async_client.post("/api/nfc/records", json=sample_uri_record_data)
+        record2_response = await async_client.post("/api/v1/nfc/records", json=sample_uri_record_data)
         assert record2_response.status_code == 201
         
         # Retrieve all records for tag
-        response = await async_client.get(f"/api/nfc/tags/{tag_id}/records")
+        response = await async_client.get(f"/api/v1/nfc/tags/{tag_id}/records")
         assert response.status_code == 200
         
         data = response.json()
@@ -456,7 +456,7 @@ class TestNFCRecordOperations:
     ):
         """Test retrieving records for non-existent tag returns 404."""
         non_existent_tag_id = str(uuid.uuid4())
-        response = await async_client.get(f"/api/nfc/tags/{non_existent_tag_id}/records")
+        response = await async_client.get(f"/api/v1/nfc/tags/{non_existent_tag_id}/records")
         
         assert response.status_code == 404
         error_data = response.json()
@@ -476,7 +476,7 @@ class TestNFCValidationAndEdgeCases:
         """Test creating tag with invalid UID format returns validation error."""
         sample_tag_data["uid"] = "invalid-uid-format"
         
-        response = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        response = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         assert response.status_code == 422  # Validation error
         
         error_data = response.json()
@@ -493,7 +493,7 @@ class TestNFCValidationAndEdgeCases:
             # Missing required fields like tech_list, tag_type, etc.
         }
         
-        response = await async_client.post("/api/nfc/tags", json=incomplete_data)
+        response = await async_client.post("/api/v1/nfc/tags", json=incomplete_data)
         assert response.status_code == 422  # Validation error
 
     @pytest.mark.asyncio
@@ -505,7 +505,7 @@ class TestNFCValidationAndEdgeCases:
     ):
         """Test creating record with invalid TNF value returns validation error."""
         # Create tag first
-        tag_response = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        tag_response = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         assert tag_response.status_code == 201
         tag_id = tag_response.json()["id"]
         
@@ -517,7 +517,7 @@ class TestNFCValidationAndEdgeCases:
             "tag_id": tag_id
         }
         
-        response = await async_client.post("/api/nfc/records", json=invalid_record_data)
+        response = await async_client.post("/api/v1/nfc/records", json=invalid_record_data)
         assert response.status_code == 422  # Validation error
 
     @pytest.mark.asyncio
@@ -529,7 +529,7 @@ class TestNFCValidationAndEdgeCases:
         """Test creating tag with empty tech_list returns validation error."""
         sample_tag_data["tech_list"] = []
         
-        response = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        response = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         assert response.status_code == 422  # Validation error
 
     @pytest.mark.asyncio
@@ -541,7 +541,7 @@ class TestNFCValidationAndEdgeCases:
     ):
         """Test handling of large record payloads."""
         # Create tag first
-        tag_response = await async_client.post("/api/nfc/tags", json=sample_tag_data)
+        tag_response = await async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
         assert tag_response.status_code == 201
         tag_id = tag_response.json()["id"]
         
@@ -554,7 +554,7 @@ class TestNFCValidationAndEdgeCases:
             "parsed_data": {"text": "x" * 9999}
         }
         
-        response = await async_client.post("/api/nfc/records", json=large_record_data)
+        response = await async_client.post("/api/v1/nfc/records", json=large_record_data)
         assert response.status_code == 201
 
     @pytest.mark.asyncio
@@ -568,7 +568,7 @@ class TestNFCValidationAndEdgeCases:
         
         # Create tasks that attempt to create the same tag simultaneously
         tasks = [
-            async_client.post("/api/nfc/tags", json=sample_tag_data)
+            async_client.post("/api/v1/nfc/tags", json=sample_tag_data)
             for _ in range(3)
         ]
         
@@ -599,7 +599,7 @@ class TestNFCValidationAndEdgeCases:
             tag_data["uid"] = f"04A12B3C4D5E{i:02X}"
             tag_data["read_location"] = coords
             
-            response = await async_client.post("/api/nfc/tags", json=tag_data)
+            response = await async_client.post("/api/v1/nfc/tags", json=tag_data)
             assert response.status_code == 201
             
             data = response.json()

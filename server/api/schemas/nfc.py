@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 import uuid
 
-from pydantic import Field, validator, constr, conint
+from pydantic import Field, field_validator, constr, conint
 from enum import Enum
 
 from server.api.schemas.base import BaseCreate, BaseResponse, BaseUpdate
@@ -43,6 +43,7 @@ class NFCRecordCreate(BaseCreate):
     payload_str: Optional[constr(max_length=10000)] = Field(None, description="String representation of payload")
     record_index: conint(ge=0) = Field(..., description="Position in the tag")
     parsed_data: Optional[Dict[str, Any]] = Field(None, description="Parsed data in JSON format")
+    tag_id: Optional[uuid.UUID] = Field(None, description="Tag ID (optional when creating with tag)")
 
 
 class NFCRecordResponse(BaseResponse):
@@ -82,6 +83,12 @@ class NFCTagCreate(BaseCreate):
     
     # Records to create with the tag
     records: List[NFCRecordCreate] = Field([], description="Records contained in the tag")
+    
+    @field_validator('tech_list')
+    def validate_tech_list(cls, v):
+        if len(v) == 0:
+            raise ValueError('tech_list cannot be empty')
+        return v
 
 
 class NFCTagResponse(BaseResponse):

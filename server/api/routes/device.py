@@ -177,7 +177,7 @@ async def update_device(
         )
     
     # Update fields
-    for key, value in device_data.dict(exclude_unset=True).items():
+    for key, value in device_data.model_dump(exclude_unset=True).items():
         setattr(device, key, value)
     
     try:

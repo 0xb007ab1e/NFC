@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 from pydantic import ValidationError
+from contextlib import asynccontextmanager
 
 from server import __version__
 from server.api.exceptions import HTTPExceptionFactory, ValidationExceptionHandler
@@ -18,7 +19,23 @@ from server.api.exceptions import HTTPExceptionFactory, ValidationExceptionHandl
 # Set up logger
 logger = logging.getLogger("nfc-server.api")
 
-# Create FastAPI app
+# Lifespan context manager for startup and shutdown events
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup event
+    logger.info("API server starting up")
+    # Initialize database
+    from server.db.config import init_db
+    init_db()
+    
+    yield
+    
+    # Shutdown event
+    logger.info("API server shutting down")
+    # Clean up resources
+    # This will be implemented as part of Phase 1 development
+
+# Create FastAPI app with lifespan context manager
 app = FastAPI(
     title="NFC Reader/Writer System API",
     description="API for the NFC Reader/Writer System PC Server",
@@ -26,6 +43,7 @@ app = FastAPI(
     docs_url=None,
     redoc_url=None,
     openapi_url="/api/openapi.json",
+    lifespan=lifespan
 )
 
 # Add CORS middleware
@@ -80,22 +98,6 @@ app.include_router(user.router, prefix="/api/v1/users", tags=["Users"])
 # app.include_router(usb.router, prefix="/api/v1/usb", tags=["USB"])
 # app.include_router(wifi.router, prefix="/api/v1/wifi", tags=["WiFi"])
 # app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
-
-# Event handlers
-@app.on_event("startup")
-async def startup_event():
-    """Execute code when the application starts up."""
-    logger.info("API server starting up")
-    # Initialize database
-    from server.db.config import init_db
-    init_db()
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Execute code when the application is shutting down."""
-    logger.info("API server shutting down")
-    # Clean up resources
-    # This will be implemented as part of Phase 1 development
 
 # Exception handlers
 @app.exception_handler(HTTPException)
