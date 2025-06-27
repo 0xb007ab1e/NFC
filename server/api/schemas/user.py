@@ -23,15 +23,15 @@ class Role(str, Enum):
 class UserCreate(BaseCreate):
     """Schema for creating a new user."""
     
-    username: constr(min_length=1, max_length=50, pattern=r'^[a-zA-Z0-9_-]+$') = Field(..., description="Unique username")
+    username: str = Field(..., description="Unique username", min_length=1, max_length=50, pattern=r'^[a-zA-Z0-9_-]+$')
     email: EmailStr = Field(..., description="User email address")
-    password: constr(min_length=8) = Field(..., description="User password")
+    password: str = Field(..., description="User password", min_length=8)
     is_active: bool = Field(default=True, description="Whether user is active")
     is_admin: bool = Field(default=False, description="Whether user has admin privileges")
-    permissions: Optional[List[constr(min_length=1, max_length=100)]] = Field(None, description="List of permissions")
-    first_name: Optional[constr(min_length=1, max_length=50)] = Field(None, description="First name")
-    last_name: Optional[constr(min_length=1, max_length=50)] = Field(None, description="Last name")
-    notes: Optional[constr(max_length=1000)] = Field(None, description="Additional notes")
+    permissions: Optional[List[str]] = Field(None, description="List of permissions")
+    first_name: Optional[str] = Field(None, description="First name", min_length=1, max_length=50)
+    last_name: Optional[str] = Field(None, description="Last name", min_length=1, max_length=50)
+    notes: Optional[str] = Field(None, description="Additional notes", max_length=1000)
     user_metadata: Optional[Dict[str, Any]] = Field(None, description="Additional user metadata")
 
     @field_validator('username')
@@ -62,17 +62,17 @@ class UserUpdate(BaseUpdate):
     is_active: Optional[bool] = Field(None, description="Whether user is active")
     is_admin: Optional[bool] = Field(None, description="Whether user has admin privileges")
     permissions: Optional[List[str]] = Field(None, description="List of permissions")
-    first_name: Optional[constr(min_length=1, max_length=50)] = Field(None, description="First name")
-    last_name: Optional[constr(min_length=1, max_length=50)] = Field(None, description="Last name")
-    notes: Optional[constr(max_length=1000)] = Field(None, description="Additional notes")
+    first_name: Optional[str] = Field(None, description="First name", min_length=1, max_length=50)
+    last_name: Optional[str] = Field(None, description="Last name", min_length=1, max_length=50)
+    notes: Optional[str] = Field(None, description="Additional notes", max_length=1000)
     user_metadata: Optional[Dict[str, Any]] = Field(None, description="Additional user metadata")
 
 
 class UserPasswordUpdate(BaseUpdate):
     """Schema for updating user password."""
     
-    current_password: constr(min_length=1) = Field(..., description="Current password")
-    new_password: constr(min_length=8) = Field(..., description="New password")
+    current_password: str = Field(..., description="Current password", min_length=1)
+    new_password: str = Field(..., description="New password", min_length=8)
     
     @field_validator('new_password')
     def validate_new_password(cls, v):
@@ -99,7 +99,7 @@ class UserResponse(BaseResponse):
     first_name: Optional[str] = Field(None, description="First name")
     last_name: Optional[str] = Field(None, description="Last name")
     last_login: Optional[datetime] = Field(None, description="Last login timestamp")
-    failed_login_attempts: conint(ge=0) = Field(..., description="Number of failed login attempts")
+    failed_login_attempts: int = Field(..., description="Number of failed login attempts", ge=0)
     locked_until: Optional[datetime] = Field(None, description="Account locked until timestamp")
     notes: Optional[str] = Field(None, description="Additional notes")
     user_metadata: Optional[Dict[str, Any]] = Field(None, description="Additional user metadata")

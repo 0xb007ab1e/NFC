@@ -25,12 +25,12 @@ class ConnectionType(str, Enum):
 class DeviceCreate(BaseCreate):
     """Schema for creating a new device."""
     
-    device_id: constr(min_length=1, max_length=255, pattern=r'^[a-zA-Z0-9_-]+$') = Field(..., description="Unique device identifier")
+    device_id: str = Field(..., description="Unique device identifier", min_length=1, max_length=255, pattern=r'^[a-zA-Z0-9_-]+$')
     name: constr(min_length=1, max_length=255) = Field(..., description="Device name")
     model: constr(min_length=1, max_length=255) = Field(..., description="Device model")
     manufacturer: constr(min_length=1, max_length=255) = Field(..., description="Device manufacturer")
-    android_version: constr(min_length=1, max_length=50, pattern=r'^\d+(\.\d+)*') = Field(..., description="Android version")
-    app_version: constr(min_length=1, max_length=50, pattern=r'^\d+(\.\d+)*') = Field(..., description="App version")
+    android_version: str = Field(..., description="Android version", min_length=1, max_length=50, pattern=r'^\d+(\.\d+)*')
+    app_version: str = Field(..., description="App version", min_length=1, max_length=50, pattern=r'^\d+(\.\d+)*')
     supports_nfc: bool = Field(default=True, description="Whether device supports NFC")
     supports_ndef: bool = Field(default=True, description="Whether device supports NDEF")
     is_active: bool = Field(default=True, description="Whether device is active")
@@ -45,8 +45,8 @@ class DeviceUpdate(BaseUpdate):
     name: Optional[constr(min_length=1, max_length=255)] = Field(None, description="Device name")
     model: Optional[constr(min_length=1, max_length=255)] = Field(None, description="Device model")
     manufacturer: Optional[constr(min_length=1, max_length=255)] = Field(None, description="Device manufacturer")
-    android_version: Optional[constr(min_length=1, max_length=50, pattern=r'^\d+(\.\d+)*')] = Field(None, description="Android version")
-    app_version: Optional[constr(min_length=1, max_length=50, pattern=r'^\d+(\.\d+)*')] = Field(None, description="App version")
+    android_version: Optional[str] = Field(None, description="Android version", min_length=1, max_length=50, pattern=r'^\d+(\.\d+)*')
+    app_version: Optional[str] = Field(None, description="App version", min_length=1, max_length=50, pattern=r'^\d+(\.\d+)*')
     supports_nfc: Optional[bool] = Field(None, description="Whether device supports NFC")
     supports_ndef: Optional[bool] = Field(None, description="Whether device supports NDEF")
     is_active: Optional[bool] = Field(None, description="Whether device is active")
