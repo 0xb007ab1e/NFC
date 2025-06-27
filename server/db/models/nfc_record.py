@@ -7,8 +7,8 @@ This module contains the NFCRecord model for storing NFC record data.
 from typing import Optional
 import uuid
 
-from sqlalchemy import Column, Integer, String, Text, LargeBinary, JSON, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, Integer, String, Text, LargeBinary, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 
 from server.db.models.base import BaseModel
@@ -31,14 +31,13 @@ class NFCRecord(BaseModel):
     # Record data
     payload = Column(LargeBinary, nullable=True)  # Binary payload data
     payload_str = Column(Text, nullable=True)  # String representation of payload if applicable
-    
     # Tag relationship
     tag_id = Column(UUID(as_uuid=True), ForeignKey("nfc_tag.id"), nullable=False)
     tag = relationship("NFCTag", back_populates="records")
     
     # Record metadata
     record_index = Column(Integer, nullable=False)  # Position in the tag
-    parsed_data = Column(JSON, nullable=True)  # Parsed data in JSON format
+    parsed_data = Column(JSONB, nullable=True)  # Parsed data in JSON format
     
     def __repr__(self) -> str:
         """
