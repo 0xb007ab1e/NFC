@@ -40,9 +40,14 @@ jobs:
     
     - name: Run Alembic migrations
       run: |
-        cd server
-        # Skip migrations for now to prevent CI failures
-        echo "Skipping migrations for CI tests"
+        cd server/db/migrations
+        # Create a temporary alembic.ini for testing
+        cp alembic.ini alembic_test.ini
+        sed -i 's|sqlite:///../../data/nfc_data.db|sqlite:////tmp/test_db/test.db|g' alembic_test.ini
+        # Run migrations
+        alembic -c alembic_test.ini upgrade head
+        # Clean up temporary config
+        rm alembic_test.ini
     
     - name: Lint with flake8
       run: |

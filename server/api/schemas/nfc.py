@@ -38,9 +38,9 @@ class NFCRecordCreate(BaseCreate):
     """Schema for creating an NFC record."""
     
     tnf: TNFType = Field(..., description="Type Name Format")
-    type: str = Field(..., description="Record type", max_length=255)
+    type: constr(max_length=255) = Field(..., description="Record type")
     payload: Optional[bytes] = Field(None, description="Binary payload data")
-    payload_str: Optional[str] = Field(None, description="String representation of payload", max_length=10000)
+    payload_str: Optional[constr(max_length=10000)] = Field(None, description="String representation of payload")
     record_index: conint(ge=0) = Field(..., description="Position in the tag")
     parsed_data: Optional[Dict[str, Any]] = Field(None, description="Parsed data in JSON format")
     tag_id: Optional[uuid.UUID] = Field(None, description="Tag ID (optional when creating with tag)")
@@ -66,8 +66,8 @@ class NFCRecordResponse(BaseResponse):
 class NFCTagCreate(BaseCreate):
     """Schema for creating an NFC tag."""
     
-    uid: str = Field(..., description="Unique identifier of the tag (hex format)", min_length=8, max_length=128, pattern=r'^[0-9A-Fa-f]+$')
-    tech_list: List[str] = Field(..., description="List of technologies supported by the tag")
+    uid: constr(strip_whitespace=True, min_length=8, max_length=128, pattern=r'^[0-9A-Fa-f]+$') = Field(..., description="Unique identifier of the tag (hex format)")
+    tech_list: List[constr(min_length=1, max_length=50)] = Field(..., description="List of technologies supported by the tag")
     tag_type: NFCTagType = Field(..., description="Type of the tag")
     is_writable: bool = Field(False, description="Whether the tag is writable")
     is_ndef_formatted: bool = Field(False, description="Whether the tag is NDEF formatted")
@@ -78,7 +78,7 @@ class NFCTagCreate(BaseCreate):
         description="GPS coordinates where the tag was read"
     )
     device_id: uuid.UUID = Field(..., description="ID of the device that read the tag")
-    notes: Optional[str] = Field(None, description="Additional notes about the tag", max_length=1000)
+    notes: Optional[constr(max_length=1000)] = Field(None, description="Additional notes about the tag")
     custom_data: Optional[Dict[str, Any]] = Field(None, description="Custom data associated with the tag")
     
     # Records to create with the tag
@@ -114,5 +114,5 @@ class NFCTagUpdate(BaseUpdate):
     """Schema for updating an NFC tag."""
     
     is_writable: Optional[bool] = None
-    notes: Optional[str] = Field(None, max_length=1000)
+    notes: Optional[constr(max_length=1000)] = Field(None, max_length=1000)
     custom_data: Optional[Dict[str, Any]] = None

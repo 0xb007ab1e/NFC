@@ -27,7 +27,7 @@ class ConnectionCreate(BaseCreate):
     connection_type: ConnectionType = Field(..., description="Connection type (USB, WiFi, etc.)")
     connected_at: datetime = Field(..., description="Connection timestamp")
     is_active: bool = Field(default=True, description="Whether connection is active")
-    ip_address: Optional[str] = Field(None, description="IP address (for WiFi connections)", pattern=r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
+    ip_address: Optional[constr(pattern=r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')] = Field(None, description="IP address (for WiFi connections)")
     port: Optional[conint(gt=0, le=65535)] = Field(None, description="Port (for WiFi connections)")
     usb_serial: Optional[constr(min_length=1, max_length=255)] = Field(None, description="USB serial number (for USB connections)")
     device_id: uuid.UUID = Field(..., description="ID of the connected device")
@@ -65,7 +65,7 @@ class ConnectionUpdate(BaseUpdate):
     
     disconnected_at: Optional[datetime] = Field(None, description="Disconnection timestamp")
     is_active: Optional[bool] = Field(None, description="Whether connection is active")
-    ip_address: Optional[str] = Field(None, description="IP address (for WiFi connections)", pattern=r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
+    ip_address: Optional[constr(pattern=r'^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')] = Field(None, description="IP address (for WiFi connections)")
     port: Optional[conint(gt=0, le=65535)] = Field(None, description="Port (for WiFi connections)")
     usb_serial: Optional[constr(min_length=1, max_length=255)] = Field(None, description="USB serial number (for USB connections)")
     user_id: Optional[uuid.UUID] = Field(None, description="ID of the authenticated user")
