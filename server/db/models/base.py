@@ -31,11 +31,11 @@ class BaseModel(Base):
     )
 
     # Timestamp columns
-    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(
         DateTime,
-        server_default=func.now(),
-        onupdate=func.now(),
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
         nullable=False,
     )
 

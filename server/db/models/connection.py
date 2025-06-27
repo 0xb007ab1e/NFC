@@ -7,8 +7,8 @@ This module contains the Connection model for tracking device connections.
 from datetime import datetime
 import uuid
 
-from sqlalchemy import Column, String, DateTime, Boolean, ForeignKey, Text
-from sqlalchemy.dialects.postgresql import UUID, JSONB
+from sqlalchemy import Column, String, DateTime, Boolean, ForeignKey, Text, JSON
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from server.db.models.base import BaseModel
@@ -46,7 +46,7 @@ class Connection(BaseModel):
     user = relationship("User", back_populates="connections")
     
     # Additional data
-    connection_info = Column(JSONB, nullable=True)  # Additional connection info
+    connection_info = Column(JSON, nullable=True)  # Additional connection info
     notes = Column(Text, nullable=True)
     
     def __repr__(self) -> str:

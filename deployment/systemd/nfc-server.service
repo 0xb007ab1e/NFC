@@ -1,0 +1,51 @@
+[Unit]
+Description=NFC Reader/Writer System Server
+Documentation=https://github.com/your-org/nfc-reader-writer
+After=network-online.target postgresql.service
+Wants=network-online.target
+Requires=postgresql.service
+
+[Service]
+Type=exec
+User=nfc
+Group=nfc
+WorkingDirectory=/opt/nfc-server
+ExecStart=/opt/nfc-server/venv/bin/python -m server.main run
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+Restart=always
+RestartSec=10
+
+# Environment
+Environment=PYTHONPATH=/opt/nfc-server
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=/etc/nfc-server/environment
+
+# Security settings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/opt/nfc-server/logs /var/log/nfc-server
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+MemoryDenyWriteExecute=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RemoveIPC=yes
+
+# Network settings
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+PrivateDevices=yes
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nfc-server
+
+[Install]
+WantedBy=multi-user.target

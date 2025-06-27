@@ -86,6 +86,19 @@ Run integration tests:
 pytest tests/integration
 ```
 
+Run API tests:
+```
+pytest tests/api
+```
+
+You can run specific API test modules:
+```
+pytest tests/api/test_validators.py
+pytest tests/api/test_user_routes.py
+pytest tests/api/test_device_routes.py
+pytest tests/api/test_connection_routes.py
+```
+
 Generate coverage report:
 ```
 pytest --cov=./ --cov-report=html

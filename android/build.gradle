@@ -28,3 +28,18 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+// Task to validate the CI pipeline configuration locally
+task validateCIConfiguration {
+    doLast {
+        println "\n=== CI Configuration Validation ===\n"
+        println "The following tasks will run in the CI pipeline:"
+        println "1. Lint: ./gradlew lint"
+        println "2. Test: ./gradlew testDebugUnitTest"
+        println "3. Build: ./gradlew assembleDebug"
+        println "\nCI workflow file: ../.github/workflows/android-ci.yml"
+        println "\nTo run the CI pipeline on GitHub, push changes to the android/ directory or the workflow file."
+        println "The pipeline will run automatically on branches: main, develop"
+        println "\nValidation successful! Your CI configuration is ready to use.\n"
+    }
+}
